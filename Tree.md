@@ -301,11 +301,17 @@ var levelOrder = function(root) {
 var lowestCommonAncestor = function(root, p, q) {
     // 1.在节点的左右子树中分别找到p, q，该节点为最近公共祖先
     // 2.该节点为p或q, 剩余另一个节点在该节点的子树中，该节点为最近公共祖先
+    //  详解：若当前节点为 p 或 q，而且其他子树返回结果为 null，这剩下的 q 或 p 必定在当前节点的子树内
     if(root == null || root == p || root == q) return root;
     const left = lowestCommonAncestor(root.left, p, q);
     const right = lowestCommonAncestor(root.right, p, q);
+    // 以下为 
+    // left 为 null, right 不为 null;
+    // left 不为 null, right 为 null; 
+    // left, right均为 null的合并
     if(left == null) return right;
     if(right == null) return left;
+    // 若 left, right 均不为 null，当前节点为最近公共节点
     return root;
 };
 ```
@@ -463,5 +469,94 @@ var dfs = function(n,sum) {
   res += dfs(n.right, sum);
   return res;
 }
+```
+
+
+
+---
+
+## 二叉树中的最大路径和 - 124 ***
+
+给定一个非空二叉树，返回其最大路径和。
+
+本题中，路径被定义为一条从树中任意节点出发，达到任意节点的序列。该路径至少包含一个节点，且不一定经过根节点。
+
+**示例 1:**
+
+```
+输入: [1,2,3]
+
+       1
+      / \
+     2   3
+
+输出: 6
+```
+
+**示例 2:**
+
+```
+输入: [-10,9,20,null,null,15,7]
+
+   -10
+   / \
+  9  20
+    /  \
+   15   7
+
+输出: 42
+```
+
+
+
+***思路***
+
+* 最大路径和的可能
+  * b + a + c
+  * b + a + a 的父节点
+  * c + a + a 的父节点
+
+```
+   a
+  / \
+ b   c
+```
+
+
+
+***步骤***
+
+```js
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val) {
+ *     this.val = val;
+ *     this.left = this.right = null;
+ * }
+ */
+/**
+ * @param {TreeNode} root
+ * @return {number}
+ */
+var maxPathSum = function(root) {
+  let maxPath = -2147483648;
+  const dfs = function(node) {
+    if(!node) return 0;
+    const leftPath = dfs(node.left);
+    const rightPath = dfs(node.right);
+    // 若左右子树的路径和为负数，则舍去
+    const leftPath_max = leftPath < 0 ? 0 : leftPath;
+    const rightPath_max = rightPath < 0 ? 0 : rightPath;
+    // 最大路径和情况一: left -> node -> right (lnr)
+    const lnr = leftPath_max + node.val + rightPath_max;
+    // 更新最大路径
+    maxPath = Math.max(maxPath, lnr);
+    // 最大路径和情况二, 三: 单边最大路径和 + 当前节点的父节点
+    return node.val + Math.max(leftPath_max, rightPath_max);
+  }
+
+  dfs(root);
+  return maxPath;
+};
 ```
 
