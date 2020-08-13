@@ -249,6 +249,147 @@ var levelOrder = function(root) {
 
 ---
 
+## 二叉树的层次遍历 II - 107
+
+给定一个二叉树，返回其节点值自底向上的层次遍历。 （即按从叶子节点所在层到根节点所在的层，逐层从左向右遍历）
+
+例如：
+给定二叉树 `[3,9,20,null,null,15,7]`,
+
+```
+    3
+   / \
+  9  20
+    /  \
+   15   7
+```
+
+返回其自底向上的层次遍历为：
+
+```
+[
+  [15,7],
+  [9,20],
+  [3]
+]
+```
+
+
+
+***解法 - 广度优先遍历***
+
+* 使用 len = q.length 确认每一层的节点数
+* .unshift() 在数组头部插入新的数组实现自底向上的层序遍历
+
+```js
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val) {
+ *     this.val = val;
+ *     this.left = this.right = null;
+ * }
+ */
+/**
+ * @param {TreeNode} root
+ * @return {number[][]}
+ */
+var levelOrderBottom = function(root) {
+  if(!root) return [];
+  const q = [root];
+  const res = [];
+  while(q.length) {
+    let len = q.length;
+    res.unshift([]);
+    while(len--) {
+      const n = q.shift();
+      res[0].push(n.val);
+      if(n.left) q.push(n.left);
+      if(n.right) q.push(n.right);
+    }
+  }
+  return res;
+};
+```
+
+
+
+---
+
+## 二叉树的锯齿形层次遍历 - 103
+
+给定一个二叉树，返回其节点值的锯齿形层次遍历。（即先从左往右，再从右往左进行下一层遍历，以此类推，层与层之间交替进行）。
+
+例如：
+给定二叉树 `[3,9,20,null,null,15,7]`,
+
+```
+    3
+   / \
+  9  20
+    /  \
+   15   7
+```
+
+返回锯齿形层次遍历如下：
+
+```
+[
+  [3],
+  [20,9],
+  [15,7]
+]
+```
+
+
+
+***解法***
+
+* 定义 ltr 判断插入当前层节点值的方向 (push or unshift)
+
+```js
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val) {
+ *     this.val = val;
+ *     this.left = this.right = null;
+ * }
+ */
+/**
+ * @param {TreeNode} root
+ * @return {number[][]}
+ */
+var zigzagLevelOrder = function(root) {
+  if(!root) return [];
+  // 初始化方向为左往右(left to right)
+  let ltr = true;
+  const q = [root];
+  const res = [];
+  while(q.length) {
+    let len = q.length;
+    res.push([]);
+    while(len--) {
+      const n = q.shift();
+      // 根据 ltr 判断遍历方向 (即使用push插入末尾还是使用unshift插入头部)
+      if(ltr) {
+        res[res.length - 1].push(n.val);
+      } else {
+        res[res.length - 1].unshift(n.val);
+      }
+      if(n.left) q.push(n.left);
+      if(n.right) q.push(n.right);
+    }
+    ltr = !ltr;
+  }
+  return res;
+};
+```
+
+
+
+
+
+---
+
 ## 二叉树的最近公共祖先 - 236 ***
 
 给定一个二叉树, 找到该树中两个指定节点的最近公共祖先。
