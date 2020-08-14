@@ -1,5 +1,177 @@
 # 树
 
+## 验证二叉搜索树 - 98
+
+给定一个二叉树，判断其是否是一个有效的二叉搜索树。
+
+假设一个二叉搜索树具有如下特征：
+
+* 节点的左子树只包含**小于**当前节点的数。
+* 节点的右子树只包含**大于**当前节点的数。
+* 所有左子树和右子树自身必须也是二叉搜索树。
+
+**示例1: **
+
+```
+输入:
+    2
+   / \
+  1   3
+输出: true
+```
+
+**示例2: **
+
+```
+输入:
+    5
+   / \
+  1   4
+     / \
+    3   6
+输出: false
+解释: 输入为: [5,1,4,null,null,3,6]。
+     根节点的值为 5 ，但是其右子节点值为 4 。
+```
+
+
+
+***思路***
+
+* 使用中序遍历，树的左节点小于根节点小于右键点，遍历
+
+
+
+***解法 - 中序遍历***
+
+```js
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val) {
+ *     this.val = val;
+ *     this.left = this.right = null;
+ * }
+ */
+/**
+ * @param {TreeNode} root
+ * @return {boolean}
+ */
+var isValidBST = function(root) {
+  if(!root) return true;
+  let pre = -Infinity;
+  const inOrder = function(node) {
+    if(!node) return true;
+    if(!inOrder(node.left)) return false;
+    // 前一个节点大于等于当前节点，不符合二叉搜索树
+    if(pre >= node.val) return false;
+    // 记录当前节点值，用以比较下一个节点
+    pre = node.val; 
+    return inOrder(node.right);
+  }
+  return inOrder(root);
+};
+```
+
+
+
+---
+
+## 二叉搜索树中的插入操作 - 701
+
+给定二叉搜索树（BST）的根节点和要插入树中的值，将值插入二叉搜索树。 返回插入后二叉搜索树的根节点。 保证原始二叉搜索树中不存在新值。
+
+注意，可能存在多种有效的插入方式，只要树在插入后仍保持为二叉搜索树即可。 你可以返回任意有效的结果。
+
+例如, 
+
+```
+给定二叉搜索树:
+
+        4
+       / \
+      2   7
+     / \
+    1   3
+
+和 插入的值: 5
+```
+
+你可以返回这个二叉搜索树:
+
+```
+         4
+       /   \
+      2     7
+     / \   /
+    1   3 5
+```
+
+或者这个树也是有效的:
+
+```
+         5
+       /   \
+      2     7
+     / \   
+    1   3
+         \
+          4
+```
+
+
+
+***解法*** - 根据搜索二叉树特性
+
+* 插入值小于当前节点，往左子树寻找合适位置
+* 插入值大于当期节点，往右子树寻找合适位置
+
+```js
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val, left, right) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.left = (left===undefined ? null : left)
+ *     this.right = (right===undefined ? null : right)
+ * }
+ */
+/**
+ * @param {TreeNode} root
+ * @param {number} val
+ * @return {TreeNode}
+ */
+var insertIntoBST = function(root, val) {
+    if(!root) return new TreeNode(val);
+    let node = root;
+    while(node) {
+      if(val < node.val) {
+        // val 小于当前节点值，插入到左子树
+        if(node.left == null) {
+          // 左子树为空，直接插入
+          node.left = new TreeNode(val);
+          return root;
+        } else {
+          // 左子树不为空，继续寻找合适位置
+          node = node.left;
+        }
+      } else {
+        // val 大于当前节点值，插入到右子树
+        if(node.right == null) {
+          // 右子树为空，直接插入
+          node.right = new TreeNode(val);
+          return root;
+        } else {
+          // 右子树不为空，继续寻找合适位置
+          node = node.right;
+        }
+      }
+    }
+};
+```
+
+
+
+---
+
 ## 二叉树的最大深度 - 104
 
 给定一个二叉树，找出其最大深度。
