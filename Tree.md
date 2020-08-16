@@ -1,5 +1,105 @@
 # 树
 
+## 先序遍历
+
+* 递归版
+
+```js
+const preOrder = function(root) {
+    if(!root) return;
+    console.log(root.val);
+    preOrder(root.left);
+    preOrder(root.right);
+}
+```
+
+* 迭代版
+
+```js
+const preOrder = function(root) {
+    if(!root) return;
+    const stack = [root];
+    while(stack.length) {
+        const node = stack.pop();
+        console.log(node.val);
+        if(node.right) stack.pop(node.right);
+        if(node.left) stack.pop(node.left);
+    }
+}
+```
+
+
+
+## 中序遍历
+
+* 递归版
+
+```js
+const inOrder = function(root) {
+    if(!root) return;
+    inOrder(root.left);
+    console.log(root.val);
+    inOrder(root.right);
+}
+```
+
+* 迭代版
+
+```js
+const inOrder = function(root) {
+    if(!root) return;
+    const stack = [];
+    let p = root;
+    while(stack.length || p) {
+        while(n) {
+            // 将左子树压栈
+            stack.push(p.left);
+            p = p.left;
+        }
+        const node = stack.pop();
+        console.log(node.val);
+        p = node.right;
+    }
+}
+```
+
+
+
+## 后序遍历
+
+* 递归版
+
+```js
+const postOrder = function(root) {
+    if(!root) return;
+    postOrder(root.right);
+    postOrder(root.left);
+    console.log(root.val);
+}
+```
+
+* 迭代版
+
+```js
+const postOrder = function(root) {
+    if(!root) return;
+    const stack = [root];
+    const outputStack = [];
+    while(stack.length) {
+        const node = stack.pop();
+        outputStack.push(node);
+        if(node.right) stack.push(node.right);
+        if(node.left) stack.push(node.left);
+    }
+    while(outputStack.length) {
+        const node = outputStack.pop();
+        console.log(node.val);
+    }
+}
+```
+
+
+
 ## 验证二叉搜索树 - 98
 
 给定一个二叉树，判断其是否是一个有效的二叉搜索树。
