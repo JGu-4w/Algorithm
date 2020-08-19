@@ -733,6 +733,65 @@ var lowestCommonAncestor = function(root, p, q) {
 
 ---
 
+## 对称二叉树 - 101
+
+给定一个二叉树，检查它是否是镜像对称的。
+
+ 
+
+例如，二叉树 `[1,2,2,3,4,4,3]` 是对称的。
+
+```
+    1
+   / \
+  2   2
+ / \ / \
+3  4 4  3
+```
+
+但是下面这个 `[1,2,2,null,3,null,3]` 则不是镜像对称的:
+
+```
+    1
+   / \
+  2   2
+   \   \
+   3    3
+```
+
+
+
+***解法***
+
+```js
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val) {
+ *     this.val = val;
+ *     this.left = this.right = null;
+ * }
+ */
+/**
+ * @param {TreeNode} root
+ * @return {boolean}
+ */
+var isSymmetric = function(root) {
+    if(!root) return true;
+    const isMirror = function(l, r) {
+      if(!l && !r) return true;
+      if(l && r && l.val === r.val && isMirror(l.left, r.right) && isMirror(l.right, r.left)) {
+        return true;
+      } 
+      return false;
+    }
+    return isMirror(root.left, root.right);
+};
+```
+
+
+
+---
+
 ## 平衡二叉树 - 110
 
 给定一个二叉树，判断它是否是高度平衡的二叉树。
@@ -809,6 +868,89 @@ var isBalanced = function(root) {
     }
   }
   return postOrder(root) !== -1;
+};
+```
+
+
+
+---
+
+## 路径总和 - 112
+
+给定一个二叉树和一个目标和，判断该树中是否存在根节点到叶子节点的路径，这条路径上所有节点值相加等于目标和。
+
+说明: 叶子节点是指没有子节点的节点。
+
+示例: 
+给定如下二叉树，以及目标和 `sum = 22`
+
+```
+              5
+             / \
+            4   8
+           /   / \
+          11  13  4
+         /  \      \
+        7    2      1
+```
+
+返回 `true`, 因为存在目标和为 22 的根节点到叶子节点的路径 `5->4->11->2`
+
+
+
+***解法一 - 先序遍历***
+
+```js
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val) {
+ *     this.val = val;
+ *     this.left = this.right = null;
+ * }
+ */
+/**
+ * @param {TreeNode} root
+ * @param {number} sum
+ * @return {boolean}
+ */
+var hasPathSum = function(root, sum) {
+  if(!root) return false;
+  sum = sum - root.val;
+  if(!root.left && !root.right) {
+    if(sum === 0) {
+      return true;
+    }
+    return false;
+  }
+  return hasPathSum(root.left, sum) || hasPathSum(root.right, sum);
+};
+```
+
+***解法二 - 深度优先遍历***
+
+```js
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val) {
+ *     this.val = val;
+ *     this.left = this.right = null;
+ * }
+ */
+/**
+ * @param {TreeNode} root
+ * @param {number} sum
+ * @return {boolean}
+ */
+var hasPathSum = function(root, sum) {
+  if(!root) return false;
+  let find = false;
+  const dfs = (n, s) => {
+    if(!n.left && !n.right && s === sum) find = true;
+    if(n.left) dfs(n.left, s + n.left.val);
+    if(n.right) dfs(n.right, s + n.right.val);
+  }
+  dfs(root, root.val);
+  return find;
 };
 ```
 
