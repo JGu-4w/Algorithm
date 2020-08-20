@@ -1115,3 +1115,217 @@ var maxPathSum = function(root) {
 };
 ```
 
+
+
+---
+
+## 从中序与后序遍历序列构造二叉树 - 106
+
+根据一棵树的中序遍历与后序遍历构造二叉树。
+
+**注意:**
+你可以假设树中没有重复的元素。
+
+例如，给出
+
+```
+中序遍历 inorder = [9,3,15,20,7]
+后序遍历 postorder = [9,15,7,20,3]
+```
+
+返回如下的二叉树：
+
+```
+    3
+   / \
+  9  20
+    /  \
+   15   7
+```
+
+***思路***
+
+* 后序遍历的最后一个节点为当前的根节点
+* 中序遍历中根节点(位置为index)左边为当前根节点的左子树(0, index-1)，数量为左子树中节点的总数(index-1-0+1)；右边为右子树
+* 根据中序遍历中左子树节点总数可以得到后序遍历中左子树的部分(前index个)，然后是右子树节点
+* 依次遍历，返回每次递归的根节点
+
+***解法***
+
+```js
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val) {
+ *     this.val = val;
+ *     this.left = this.right = null;
+ * }
+ */
+/**
+ * @param {number[]} inorder
+ * @param {number[]} postorder
+ * @return {TreeNode}
+ */
+var buildTree = function(inorder, postorder) {
+  const post_end = postorder[postorder.length - 1]; // 根节点
+  if(!post_end && post_end !== 0) return null;
+  const root = new TreeNode(post_end);
+  const index = inorder.indexOf(post_end);
+  // 当前根节点位置为 index, 则根节点的左子树为中序遍历中的 index 左侧(0, index-1)
+  // 左子树节点数量为 index - 1 - 0 + 1 = index 个
+  // 因为节点数量一致，根节点的左子树为后序遍历中的 前index个 (0, index - 1)
+  const inorder_left = inorder.slice(0, index);
+  const postorder_left = postorder.slice(0, index);
+  // 右子树同理
+  const inorder_right = inorder.slice(index + 1);
+  const postorder_right = postorder.slice(index, -1);
+
+  root.left = buildTree(inorder_left, postorder_left);
+  root.right = buildTree(inorder_right, postorder_right);
+
+  return root;
+};
+```
+
+
+
+---
+
+## 从前序与中序遍历序列构造二叉树 - 105
+
+根据一棵树的前序遍历与中序遍历构造二叉树。
+
+**注意:**
+你可以假设树中没有重复的元素。
+
+例如，给出
+
+```
+前序遍历 preorder = [3,9,20,15,7]
+中序遍历 inorder = [9,3,15,20,7]
+```
+
+返回如下的二叉树：
+
+```
+    3
+   / \
+  9  20
+    /  \
+   15   7
+```
+
+***思路***
+
+* 由前序遍历获取当前根节点
+* 从中序遍历中找出左右子树
+* 递归
+
+***解法***
+
+```js
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val) {
+ *     this.val = val;
+ *     this.left = this.right = null;
+ * }
+ */
+/**
+ * @param {number[]} preorder
+ * @param {number[]} inorder
+ * @return {TreeNode}
+ */
+var buildTree = function(preorder, inorder) {
+  const pre_start = preorder[0];
+  if(!pre_start && pre_start !== 0) return null;
+  const index = inorder.indexOf(pre_start);
+  const root = new TreeNode(pre_start);
+  // 前序遍历第一个元素为当前的根节点
+  // 中序遍历根节点左侧为左子树，右侧为右子树
+  const inorder_left = inorder.slice(0,index);
+  // 获取左子树节点总数
+  const num_left = inorder_left.length;
+  const preorder_left = preorder.slice(1, num_left + 1);
+  
+  const inorder_right = inorder.slice(index + 1);
+  const preorder_right = preorder.slice(num_left + 1);
+
+  root.left = buildTree(preorder_left,inorder_left);
+  root.right = buildTree(preorder_right, inorder_right);
+
+  return root;
+};
+```
+
+
+
+---
+
+## 根据前序和后序遍历构造二叉树 - 889
+
+返回与给定的前序和后序遍历匹配的任何二叉树。
+
+ `pre` 和 `post` 遍历中的值是不同的正整数。
+
+ 
+
+**示例：**
+
+```
+输入：pre = [1,2,4,5,3,6,7], post = [4,5,2,6,7,3,1]
+输出：[1,2,3,4,5,6,7]
+```
+
+**提示：**
+
+* `1 <= pre.length == post.length <= 30`
+* `pre[]` 和 `post[]` 都是 `1, 2, ..., pre.length` 的排列
+* 每个输入保证至少有一个答案。如果有多个答案，可以返回其中一个。
+
+
+
+***思路***
+
+* 根据前序遍历获取根节点及左子树的根节点
+* 根据左子树的根节点判断后序遍历中属于当前节点左子树的部分
+* 接下来的思路与前面两题(105,106)类似
+
+***解法***
+
+```js
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val) {
+ *     this.val = val;
+ *     this.left = this.right = null;
+ * }
+ */
+/**
+ * @param {number[]} pre
+ * @param {number[]} post
+ * @return {TreeNode}
+ */
+var constructFromPrePost = function(pre, post) {
+  const pre_start = pre[0];
+  if(!pre_start && pre_start !== 0) return null;
+  const root = new TreeNode(pre_start);
+  // 当前左子树的根节点
+  const pre_left_root = pre[1];
+  // post_left_index 的左侧为所有左子树节点
+  const post_left_index = post.indexOf(pre_left_root);
+
+  const post_left = post.slice(0, post_left_index + 1);
+  const post_left_length = post_left.length;
+  const pre_left = pre.slice(1, 1 + post_left_length);
+
+  const post_right = post.slice(post_left_index + 1);
+  const pre_right = pre.slice(1 + post_left_length);
+
+  root.left = constructFromPrePost(pre_left, post_left);
+  root.right = constructFromPrePost(pre_right, post_right);
+
+  return root;
+
+};
+```
+
