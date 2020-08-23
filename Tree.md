@@ -272,6 +272,62 @@ var insertIntoBST = function(root, val) {
 
 ---
 
+## 最小高度树 - 面试题 04.02
+
+给定一个有序整数数组，元素各不相同且按升序排列，编写一个算法，创建一棵高度最小的二叉搜索树。
+
+**示例:**
+
+```
+给定有序数组: [-10,-3,0,5,9],
+
+一个可能的答案是：[0,-3,9,-10,null,5]，它可以表示下面这个高度平衡二叉搜索树：
+
+          0 
+         / \ 
+       -3   9 
+       /   / 
+     -10  5 
+```
+
+
+
+***解法 - 递归***
+
+* 高度最小，即左右子树高度差尽可能小，选取有序数组的中间值进行递归
+
+```js
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val) {
+ *     this.val = val;
+ *     this.left = this.right = null;
+ * }
+ */
+/**
+ * @param {number[]} nums
+ * @return {TreeNode}
+ */
+var sortedArrayToBST = function(nums) {
+  if(!nums) return [];
+  const dfs = function(nums, l, r) {
+    if(l > r) return null;
+    // 向右移一位，相当去取中间值
+    const mid = (l + r) >> 1;
+    const node = new TreeNode(nums[mid]);
+    node.left = dfs(nums, l, mid - 1);
+    node.right = dfs(nums, mid + 1, r);
+    return node;
+  }
+  const root = dfs(nums, 0, nums.length - 1);
+  return root;
+};
+```
+
+
+
+---
+
 ## 二叉树的最大深度 - 104
 
 给定一个二叉树，找出其最大深度。
