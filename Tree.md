@@ -272,6 +272,74 @@ var insertIntoBST = function(root, val) {
 
 ---
 
+## 二叉搜索树的范围和 - 938
+
+给定二叉搜索树的根结点 `root`，返回 `L` 和 `R`（含）之间的所有结点的值的和。
+
+二叉搜索树保证具有唯一的值。
+
+ 
+
+**示例 1：**
+
+```
+输入：root = [10,5,15,3,7,null,18], L = 7, R = 15
+输出：32
+```
+
+**示例 2：**
+
+```
+输入：root = [10,5,15,3,7,13,18,1,null,6], L = 6, R = 10
+输出：23
+```
+
+**提示：**
+
+1. 树中的结点数量最多为 `10000` 个。
+2. 最终的答案保证小于 `2^31`。
+
+
+
+***解法 - 二叉搜索树特性***
+
+* 当前节点为null时，返回0
+* 若当前节点小于 L 则在其右子树查找符合结果
+* 若当前节点大于 R 则在其左子树查找符合结果
+* 若当前节点满足条件，结果加当前节点值，然后递归左右子树
+
+```js
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val) {
+ *     this.val = val;
+ *     this.left = this.right = null;
+ * }
+ */
+/**
+ * @param {TreeNode} root
+ * @param {number} L
+ * @param {number} R
+ * @return {number}
+ */
+var rangeSumBST = function(root, L, R) {
+  if(!root) return 0;
+  let res = 0;
+  if(root.val < L) {
+    res += rangeSumBST(root.right, L, R);
+  } else if(root.val > R) {
+    res += rangeSumBST(root.left, L, R);
+  } else {
+    res += root.val + rangeSumBST(root.left, L, R) + rangeSumBST(root.right, L, R);
+  }
+  return res;
+};
+```
+
+
+
+---
+
 ## 最小高度树 - 面试题 04.02
 
 给定一个有序整数数组，元素各不相同且按升序排列，编写一个算法，创建一棵高度最小的二叉搜索树。
