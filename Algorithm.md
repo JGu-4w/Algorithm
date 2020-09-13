@@ -500,7 +500,7 @@ Array.prototype.selectionSort = function() {
             }
         }
         const temp = this[i];
-        this[0] = this[indexMin];
+        this[i] = this[indexMin];
         this[indexMin] = temp;
     }
 }
